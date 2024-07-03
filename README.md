@@ -1,20 +1,27 @@
 # Ledger Plugin Swell
+[![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
+---
+
+![zondax_light](docs/zondax_light.png#gh-light-mode-only)
+![zondax_dark](docs/zondax_dark.png#gh-dark-mode-only)
+
+_Please visit our website at [zondax.ch](https://www.zondax.ch)_
+
+---
 
 This is a plugin for the Ethereum application which helps parsing and displaying relevant information when signing a Swell smart contract.
 
-## Prerequisite
+- Ledger Nano S/S+/X/Stax Swell plugin
+- Specs / Documentation
+- Ragger tests
 
-Clone the plugin to a new folder.
+## ATTENTION
 
-```shell
-git clone https://github.com/libertify/ledger-plugin-lens.git
-```
+Please:
 
-Then in the same folder clone the app-ethereum.
-
-```shell
-git clone --recurse-submodules https://github.com/LedgerHQ/app-ethereum.git     #app-ethereum
-```
+- **Do not use in production**
+- **Do not use a Ledger device with funds for development purposes.**
+- **Have a separate and marked device that is used ONLY for development and testing**
 
 ## Documentation
 
@@ -53,23 +60,15 @@ Smart contracts covered by this plugin are:
 *For strings and byte arrays bigger then 32, plugin is showing the first and last 16 bytes in "16...16" format, due to memory limitations.
 For addNewValidatorDetails, deleteActiveValidators, deletePendingValidators, usePubKeysForValidatorSetup, plugin can only verify transactions with 4 pubkeys maximum due to memory limitation.
 
-## Build
 
-To build the plugin, go to your folder with Ethereum app and plugin. Open a new terminal window and run:
-```shell
-sudo docker run --rm -ti -v "$(realpath .):/app" -v "$(realpath app-ethereum):/plugin_dev/app-ethereum" --user $(id -u $USER):$(id -g $USER) ghcr.io/ledgerhq/ledger-app-builder/ledger-app-dev-tools:latest
-```
+## How to build
 
-In the container, go to the plugin repository, then to the tests/ folder.
-```shell
-cd ledger-plugin-swell/tests
-./build_local_test_elfs.sh. 
-```
+Ledger's recommended [plugin guide](https://developers.ledger.com/docs/dapp/embedded-plugin/code-overview/) is out-dated and doesn't work since they introduced a lot of new changes. Here's a simple way to get started with this repo:
+1. Clone this repo (along with git submodules)
+2. Install [Xquartz](https://www.xquartz.org/) and make sure you have enabled "Allow connections from network clients" enabled under "Security" settings.
+3. Install and start Docker (Note: If Docker is already running, quit and start it after starting Xquartz, otherwise docker cannot connect to Xquartz).
+4. Install the [Ledger Dev Tools VS Code plugin](https://marketplace.visualstudio.com/items?itemName=LedgerHQ.ledger-dev-tools#:~:text=ledger%2Dvscode%2Dextension,Plus%2C%20Nano%20X%2C%20Stax) and makes sure it's enabled
+5. Once you have installed the plugin and open the repo, the plugin should by default try to create and start the containers. If it doesn't, you can simply click "Update Container" under "Ledger Dev Tools" in the Activity Side Bar on VS Code.
+6. On the "Ledger Dev Tools" side bar, Select a target and then click on Build. 
+7. Once build is complete, click on "Run tests" to run the tests
 
-## Tests
-
-To test the plugin go to the tests folder from the "ledger-plugin-swell" and run the script "test"
-```shell
-cd ledger-plugin-swell/tests         # go to the tests folder in ledger-plugin-swell
-yarn test                       # run the script test
-```

@@ -1,5 +1,4 @@
-#include "swell_plugin.h"
-
+#include "plugin.h"
 uint8_t bytes_missing = 0;
 
 static void copy_text(uint8_t *dst, uint16_t dst_len, uint16_t max_len, const uint8_t *src) {
