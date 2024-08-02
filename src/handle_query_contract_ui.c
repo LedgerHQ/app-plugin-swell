@@ -1,5 +1,4 @@
-#include <stdbool.h>
-#include "swell_plugin.h"
+#include "plugin.h"
 
 // Set UI for any address screen.
 static bool set_address_ui(ethQueryContractUI_t *msg, address_t *value) {
@@ -16,7 +15,6 @@ static bool set_address_ui(ethQueryContractUI_t *msg, address_t *value) {
     return getEthAddressStringFromBinary(
         value->value,
         msg->msg + 2,  // +2 here because we've already prefixed with '0x'.
-        msg->pluginSharedRW->sha3,
         chainid);
 }
 
@@ -76,13 +74,18 @@ static bool set_addr_ui(ethQueryContractUI_t *msg, address_t *address, const cha
 static bool set_name_ui(ethQueryContractUI_t *msg, name_t *name, const char *title) {
     strlcpy(msg->title, title, msg->titleLength);
     if (name->ellipsis) {
-        snprintf(msg->msg, msg->msgLength, "%.*s...%s", 16, name->text, name->text + 16);
-        return true;
+        char buffer[32];
+        strncpy(buffer, (const char *) name->text, 16);
+        buffer[16] = '\0';
+        strlcat(buffer, "...", sizeof(buffer));
+        strlcat(buffer, (const char *) (name->text + 16), sizeof(buffer));
+        strncpy(msg->msg, buffer, msg->msgLength - 1);
+        msg->msg[msg->msgLength - 1] = '\0';
     } else {
-        snprintf(msg->msg, msg->msgLength, "%s", name->text);
-        return true;
+        strncpy(msg->msg, (const char *) name->text, msg->msgLength - 1);
+        msg->msg[msg->msgLength - 1] = '\0';
     }
-    return false;
+    return true;
 }
 
 void handle_query_contract_ui(ethQueryContractUI_t *msg) {
@@ -213,6 +216,24 @@ void handle_query_contract_ui(ethQueryContractUI_t *msg) {
                 ret = false;
             }
             break;
+        case DEPOSIT:
+            if (msg->screenIndex == 0) {
+                strlcpy(msg->title, "Stake", msg->titleLength);
+                const uint8_t *eth_amount = msg->pluginSharedRO->txContent->value.value;
+                uint8_t eth_amount_size = msg->pluginSharedRO->txContent->value.length;
+
+                ret = amountToString(eth_amount,
+                                     eth_amount_size,
+                                     WEI_TO_ETHER,
+                                     "ETH",
+                                     msg->msg,
+                                     msg->msgLength);
+            } else {
+                PRINTF("Received an invalid screenIndex\n");
+                ret = false;
+            }
+            break;
+
         default:
             PRINTF("Selector index: %d not supported\n", context->selectorIndex);
             ret = false;

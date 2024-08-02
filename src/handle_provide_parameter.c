@@ -1,5 +1,4 @@
-#include "swell_plugin.h"
-
+#include "plugin.h"
 uint8_t bytes_missing = 0;
 
 static void copy_text(uint8_t *dst, uint16_t dst_len, uint16_t max_len, const uint8_t *src) {
@@ -789,6 +788,8 @@ void handle_provide_parameter(ethPluginProvideParameter_t *msg) {
             break;
         case WITHDRAWERC20:
             handle_withdraw(msg, context);
+            break;
+        case DEPOSIT:
             break;
         default:
             PRINTF("Selector Index not supported: %d\n", context->selectorIndex);
