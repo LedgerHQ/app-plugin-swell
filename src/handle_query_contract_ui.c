@@ -219,8 +219,8 @@ void handle_query_contract_ui(ethQueryContractUI_t *msg) {
         case DEPOSIT:
             if (msg->screenIndex == 0) {
                 strlcpy(msg->title, "Stake", msg->titleLength);
-                const uint8_t *eth_amount = msg->pluginSharedRO->txContent->value.value;
-                uint8_t eth_amount_size = msg->pluginSharedRO->txContent->value.length;
+                const uint8_t *eth_amount = msg->txContent->value.value;
+                uint8_t eth_amount_size = msg->txContent->value.length;
 
                 ret = amountToString(eth_amount,
                                      eth_amount_size,
